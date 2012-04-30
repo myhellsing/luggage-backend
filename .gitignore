@@ -1,0 +1,11 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Idea Files #
+.idea
+luggage-backend.iml
+out
