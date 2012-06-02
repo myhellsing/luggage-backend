@@ -1,7 +1,7 @@
 package database;
+
 import com.google.code.morphia.Datastore;
 import com.google.code.morphia.Morphia;
-import com.mongodb.DB;
 import com.mongodb.Mongo;
 import common.Config;
 
@@ -17,28 +17,14 @@ import java.net.UnknownHostException;
 public class DatabaseStore {
 
     private static Mongo m =null;
-    private static Datastore db = null;
+    private static Datastore ds = null;
     private static Morphia morphia = null;
 
-
-
-    public static Datastore getDBS(){
-        if (db == null){
-            db= createDBS();
+    public static Datastore getDS(){
+        if (ds==null){
+            ds = DatabaseStore.getMorphia().createDatastore(DatabaseStore.getMongo(), Config.DATABASE_NAME);
         }
-        return db;
-    }
-
-    private static Datastore createDBS(){
-        return  getMorphia().createDatastore(getMongo(), Config.DATABASE_NAME);
-    }
-
-    private static Morphia getMorphia(){
-        if (morphia==null){
-                morphia = new Morphia();
-                morphia.map(User.class);
-        }
-        return morphia;
+        return ds;
     }
 
     public static Mongo getMongo(){
@@ -50,6 +36,14 @@ public class DatabaseStore {
             }
         }
         return m;
+    }
+
+    private static Morphia getMorphia(){
+        if (morphia==null){
+                morphia = new Morphia();
+                morphia.map(User.class);
+        }
+        return morphia;
     }
 
 }

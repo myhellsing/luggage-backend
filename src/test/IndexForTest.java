@@ -1,10 +1,13 @@
-package controller;
+package test;
 
+import common.Config;
+import controller.UserController;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
 import static spark.Spark.get;
+import static spark.Spark.setPort;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,10 +16,13 @@ import static spark.Spark.get;
  * Time: 20:57
  * To change this template use File | Settings | File Templates.
  */
-public class Index {
+public class IndexForTest {
 
     public static void main(String[] args) {
 
+        setPort(Config.TEST_PORT);
+
+        Config.DATABASE_NAME = Config.TEST_DATABASE_NAME;
 
         new UserController().route();
 

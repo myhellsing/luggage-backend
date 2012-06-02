@@ -2,7 +2,6 @@ package test;
 
 
 import com.google.code.morphia.Datastore;
-import com.google.code.morphia.Morphia;
 import database.DatabaseStore;
 import database.User;
 import junit.framework.Assert;
@@ -20,14 +19,14 @@ import java.util.List;
 
 public class UserTest extends BaseTest{
 
+
+
     @Test
     public void testGetUsers() {
         try {
             User user = new User();
             user.setName("Darya");
-            Morphia morphia = new Morphia();
-            morphia.map(User.class);
-            Datastore ds = morphia.createDatastore(DatabaseStore.getMongo(), "test_database");
+            Datastore ds = DatabaseStore.getDS();
             ds.save(user);
             TestUtils.UrlResponse response = testUtil.doMethod("GET", "/users", null);
             Assert.assertNotNull(response);
@@ -47,12 +46,12 @@ public class UserTest extends BaseTest{
             Assert.assertNotNull(response);
             Assert.assertNotNull(response.body);
             Assert.assertEquals("ok",response.body);
-            Morphia morphia = new Morphia();
-            Datastore ds = morphia.createDatastore(DatabaseStore.getMongo(), "test_database");
+            Datastore ds = DatabaseStore.getDS();
             List<User> users = ds.find(User.class).asList();
             Assert.assertEquals(1,users.size());
-            Assert.assertEquals("Cat",users.get(0).getName());
-            ds.delete(users.get(0));
+            User user = users.get(0);
+            Assert.assertEquals("Cat",user.getName());
+            ds.delete(user);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }

@@ -1,10 +1,9 @@
 package test;
 
+import common.Config;
 import junit.framework.Assert;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import spark.Spark;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,7 +18,8 @@ public class BaseTest {
 
     @BeforeClass
     public static void setup() {
-        testUtil = new TestUtils(4567);
+        testUtil = new TestUtils(Config.TEST_PORT);
+        Config.DATABASE_NAME = Config.TEST_DATABASE_NAME;
     }
 
     @Test

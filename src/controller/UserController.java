@@ -1,10 +1,8 @@
 package controller;
 
-import com.google.code.morphia.Datastore;
-import com.google.code.morphia.Morphia;
 import database.DatabaseStore;
 import database.User;
-import org.json.simple.*;
+import org.json.simple.JSONValue;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -28,10 +26,7 @@ public class UserController {
         get(new Route("/users") {
             @Override
             public Object handle(Request request, Response response) {
-                Morphia morphia = new Morphia();
-                morphia.map(User.class);
-                Datastore ds = morphia.createDatastore(DatabaseStore.getMongo(), "test_database");
-                List<User> users =ds.find(User.class).asList();
+                List<User> users = DatabaseStore.getDS().find(User.class).asList();
                 String jsonText = JSONValue.toJSONString(users);
                 return users;
             }
@@ -43,11 +38,7 @@ public class UserController {
                 String name = request.queryParams("name");
                 User user = new User();
                 user.setName(name);
-                Morphia morphia = new Morphia();
-                morphia.map(User.class);
-                Datastore ds = morphia.createDatastore(DatabaseStore.getMongo(), "test_database");
-
-                ds.save(user);
+                DatabaseStore.getDS().save(user);
                 return "ok";
             }
         });
