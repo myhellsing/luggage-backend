@@ -1,8 +1,6 @@
 package test;
 
 
-import com.google.code.morphia.Datastore;
-import database.DatabaseStore;
 import database.User;
 import junit.framework.Assert;
 import org.junit.Test;
@@ -21,40 +19,78 @@ public class UserTest extends BaseTest{
 
 
 
+
+    private User addNewUser(){
+        User user = new User();
+        user.setLogin("cat");
+        ds.save(user);
+        return user;
+
+    }
+
+    private void delete(User user){
+        ds.delete(user);
+    }
+
     @Test
     public void testGetUsers() {
+        User user = addNewUser();
         try {
-            User user = new User();
-            user.setName("Darya");
-            Datastore ds = DatabaseStore.getDS();
-            ds.save(user);
-            TestUtils.UrlResponse response = testUtil.doMethod("GET", "/users", null);
-            Assert.assertNotNull(response);
-            Assert.assertNotNull(response.body);
-            String expected = "[{\"id\":"+user.getId()+",\"name\":Darya}]";
+            TestUtils.UrlResponse response = testUtil.doMethod("GET", "/user", null);
+            String expected = "[{\"id\":"+user.getId()+",\"login\":cat}]";
             Assert.assertEquals(expected,response.body);
-            ds.delete(user);
         } catch (Throwable e) {
             throw new RuntimeException(e);
+        }
+        finally {
+            delete(user);
         }
     }
 
     @Test
     public void testAddUser() {
         try {
-            TestUtils.UrlResponse response = testUtil.doMethod("POST", "/users?name=Cat",null);
-            Assert.assertNotNull(response);
-            Assert.assertNotNull(response.body);
+            TestUtils.UrlResponse response = testUtil.doMethod("POST", "/user?login=catty",null);
             Assert.assertEquals("ok",response.body);
-            Datastore ds = DatabaseStore.getDS();
             List<User> users = ds.find(User.class).asList();
             Assert.assertEquals(1,users.size());
             User user = users.get(0);
-            Assert.assertEquals("Cat",user.getName());
-            ds.delete(user);
+            Assert.assertEquals("catty",user.getLogin());
+            delete(user);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void testGetUserByLogin(){
+        User user = addNewUser();
+        try{
+            TestUtils.UrlResponse response = testUtil.doMethod("GET", "/user/cat", null);
+            String expected = "{\"id\":"+user.getId()+",\"login\":cat}";
+            Assert.assertEquals(expected,response.body);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            delete(user);
+        }
+    }
+    @Test
+    public void testDeleteByLogin(){
+        User user = addNewUser();
+        try{
+            TestUtils.UrlResponse response = testUtil.doMethod("DELETE", "/user/cat", null);
+            Assert.assertEquals("ok",response.body);
+            List<User> users = ds.find(User.class).asList();
+            Assert.assertEquals(0,users.size());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            delete(user);
+        }
+
     }
 
 

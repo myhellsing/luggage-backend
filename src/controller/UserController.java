@@ -1,5 +1,6 @@
 package controller;
 
+import com.google.code.morphia.Datastore;
 import database.DatabaseStore;
 import database.User;
 import org.json.simple.JSONValue;
@@ -9,8 +10,7 @@ import spark.Route;
 
 import java.util.List;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
+import static spark.Spark.*;
 
 
 /**
@@ -23,7 +23,7 @@ import static spark.Spark.post;
 public class UserController {
     public static void route(){
 
-        get(new Route("/users") {
+        get(new Route("/user") {
             @Override
             public Object handle(Request request, Response response) {
                 List<User> users = DatabaseStore.getDS().find(User.class).asList();
@@ -32,16 +32,40 @@ public class UserController {
             }
         });
 
-        post(new Route("/users") {
+        get(new Route("/user/:login") {
+
             @Override
             public Object handle(Request request, Response response) {
-                String name = request.queryParams("name");
+                User user = DatabaseStore.getDS().find(User.class,"login",request.params(":login")).get();
+                return JSONValue.toJSONString(user);
+            }
+        }
+
+        );
+
+        post(new Route("/user") {
+            @Override
+            public Object handle(Request request, Response response) {
+                String login = request.queryParams("login");
                 User user = new User();
-                user.setName(name);
+                user.setLogin(login);
                 DatabaseStore.getDS().save(user);
                 return "ok";
             }
         });
+
+        delete(new Route("/user/:login") {
+            @Override
+            public Object handle(Request request, Response response) {
+                Datastore ds =DatabaseStore.getDS();
+                ds.delete(ds.find(User.class,"login",request.params(":login")));
+                return "ok";  //To change body of implemented methods use File | Settings | File Templates.
+            }
+        }
+
+        );
+
+
 
     }
 }

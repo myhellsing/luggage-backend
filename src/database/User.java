@@ -12,17 +12,18 @@ import com.google.code.morphia.annotations.Entity;
  */
 @Entity("users")
 public class User extends BaseClass{
-    String name; // Типы, передаваемые по значению сохраняются автоматически
 
-    public String getName() {
-        return name;
+    String login; // Типы, передаваемые по значению сохраняются автоматически
+
+    public String getLogin() {
+        return login;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String toString(){
-        return "{\"id\":"+id+",\"name\":"+name+"}";
+        return "{\"id\":"+id+",\"login\":"+login+"}";
     }
 }

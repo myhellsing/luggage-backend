@@ -1,6 +1,8 @@
 package test;
 
+import com.google.code.morphia.Datastore;
 import common.Config;
+import database.DatabaseStore;
 import junit.framework.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,6 +15,8 @@ import org.junit.Test;
  * To change this template use File | Settings | File Templates.
  */
 public class BaseTest {
+
+    protected static Datastore ds = null;
     static TestUtils testUtil;
 
 
@@ -20,6 +24,7 @@ public class BaseTest {
     public static void setup() {
         testUtil = new TestUtils(Config.TEST_PORT);
         Config.DATABASE_NAME = Config.TEST_DATABASE_NAME;
+        ds = DatabaseStore.getDS();
     }
 
     @Test
