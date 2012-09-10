@@ -3,6 +3,8 @@ package test;
 
 import database.User;
 import junit.framework.Assert;
+import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -17,7 +19,13 @@ import java.util.List;
 
 public class UserTest extends BaseTest{
 
-
+    @After
+    public void tearDown() throws Exception {
+        List<User> list =  ds.find(User.class).asList();
+        for (User user:list){
+            ds.delete(user);
+        }
+    }
 
 
     private User addNewUser(){
@@ -32,16 +40,12 @@ public class UserTest extends BaseTest{
         ds.delete(user);
     }
 
-    private String getJsonString(User user){
-        return "{\"id\":"+user.getId()+",\"login\":"+user.getLogin()+"}";
-    }
-
     @Test
     public void testGetUsers() {
         User user = addNewUser();
         try {
             TestUtils.UrlResponse response = testUtil.doMethod("GET", "/user", null);
-            Assert.assertEquals("["+getJsonString(user)+"]",response.body);
+            Assert.assertEquals("["+user.toString()+"]",response.body);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -78,7 +82,7 @@ public class UserTest extends BaseTest{
         User user = addNewUser();
         try{
             TestUtils.UrlResponse response = testUtil.doMethod("GET", "/user/"+user.getId(), null);
-            Assert.assertEquals(getJsonString(user),response.body);
+            Assert.assertEquals(user.toString(),response.body);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -103,6 +107,33 @@ public class UserTest extends BaseTest{
             delete(user);
         }
 
+    }
+
+/*    @Test
+    public void testDeleteByIdNotExist(){
+        try{
+            TestUtils.UrlResponse response = testUtil.doMethod("DELETE", "/user/"+"504e28fc84aec0ff09ab9aed", null);
+            Assert.assertEquals("not found",response.body);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+        }
+
+    }*/
+
+    @Test
+    @Ignore
+    public void testDeleteByIdString(){
+        String id ="504e2b1984aecefa97c656cf";
+        //String id ="504e28fc84aec0ff09ab9aed"; 504e29ec84ae82bab2246915 504e2b1984aecefa97c656cf
+        TestUtils.UrlResponse response = null;
+        try {
+            response = testUtil.doMethod("DELETE", "/user/"+id, null);
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        Assert.assertEquals("ok",response.body);
     }
 
 

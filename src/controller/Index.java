@@ -19,6 +19,7 @@ public class Index {
 
 
         new UserController().route();
+        new TagController().route();
 
         get(new Route("/hello") {
             @Override

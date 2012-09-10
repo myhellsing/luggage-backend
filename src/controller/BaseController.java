@@ -46,12 +46,18 @@ abstract public class BaseController {
             }
         });
 
+        //TODO:: разобраться со случаем, когда сущность не найдена
         delete(new Route(baseRoute+"/:id") {
             @Override
             public Object handle(Request request, Response response) {
                 Datastore ds =DatabaseStore.getDS();
-                ds.delete(ds.get(className, new ObjectId(request.params(":id"))));
-                return "ok";
+                Object obj =ds.get(className, new ObjectId(request.params(":id")));
+                if (obj !=null){
+                    ds.delete(obj);
+                    return "ok";
+                }
+                return "not found";
+
             }
         });
 

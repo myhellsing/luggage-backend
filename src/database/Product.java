@@ -14,5 +14,5 @@ import java.util.List;
 @Entity("product")
 public class Product extends BaseClass{
     String name;
-    List<Tags> tags;
+    List<Tag> tags;
 }

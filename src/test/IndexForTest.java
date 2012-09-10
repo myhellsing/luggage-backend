@@ -1,6 +1,7 @@
 package test;
 
 import common.Config;
+import controller.TagController;
 import controller.UserController;
 import spark.Request;
 import spark.Response;
@@ -24,7 +25,9 @@ public class IndexForTest {
 
         Config.DATABASE_NAME = Config.TEST_DATABASE_NAME;
 
+        new TagController().route();
         new UserController().route();
+
 
         get(new Route("/hello") {
             @Override
