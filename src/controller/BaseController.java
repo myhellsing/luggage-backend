@@ -1,8 +1,8 @@
 package controller;
 
 import com.google.code.morphia.Datastore;
+import common.GsonUtils;
 import database.DatabaseStore;
-import org.bson.types.ObjectId;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -17,22 +17,23 @@ import static spark.Spark.*;
  */
 abstract public class BaseController {
 
-    protected  String baseRoute = "/default";
-    protected  Class className = null;
+    protected String baseRoute = "/default";
+    protected Class className = null;
 
-    protected  Object updateFieldsFromRequest(Request request, Object object) throws IllegalAccessException {
-        for (Field field:className.getDeclaredFields() ){
-            if (request.queryParams(field.getName()) != null){
+
+    protected Object updateFieldsFromRequest(Request request, Object object) throws IllegalAccessException {
+        for (Field field : className.getDeclaredFields()) {
+            if (request.queryParams(field.getName()) != null) {
                 field.setAccessible(true);
-                field.set(object,request.queryParams(field.getName()));
+                field.set(object, request.queryParams(field.getName()));
             }
         }
         return object;
     }
 
-    public  void route(){
+    public void route() {
 
-        get(new Route(baseRoute+"/checkController"){
+        get(new Route(baseRoute + "/checkController") {
             @Override
             public Object handle(Request request, Response response) {
                 return baseRoute;
@@ -50,17 +51,17 @@ abstract public class BaseController {
         get(new Route(baseRoute + "/:id") {
             @Override
             public Object handle(Request request, Response response) {
-                return DatabaseStore.getDS().get(className,new ObjectId(request.params(":id")));
+                return DatabaseStore.getDS().get(className, request.params(":id"));
             }
         });
 
         //TODO:: разобраться со случаем, когда сущность не найдена
-        delete(new Route(baseRoute+"/:id") {
+        delete(new Route(baseRoute + "/:id") {
             @Override
             public Object handle(Request request, Response response) {
-                Datastore ds =DatabaseStore.getDS();
-                Object obj =ds.get(className, new ObjectId(request.params(":id")));
-                if (obj !=null){
+                Datastore ds = DatabaseStore.getDS();
+                Object obj = ds.get(className, request.params(":id"));
+                if (obj != null) {
                     ds.delete(obj);
                     return "ok";
                 }
@@ -72,33 +73,16 @@ abstract public class BaseController {
         post(new Route(baseRoute) {
             @Override
             public Object handle(Request request, Response response) {
-                try {
-                    Object object = className.newInstance();
-                    object = updateFieldsFromRequest(request,object);
-                    DatabaseStore.getDS().save(object);
-                    return "ok";
-                } catch (InstantiationException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
-                return "(";
-
+                Object object = GsonUtils.gson().fromJson(request.body(), className);
+                DatabaseStore.getDS().save(object);
+                return "ok";
             }
         });
 
         put(new Route(baseRoute) {
             @Override
             public Object handle(Request request, Response response) {
-                if (request.queryParams("id") == null){
-                    return "id required";
-                }
-                Object object =DatabaseStore.getDS().get(className,new ObjectId(request.queryParams("id")));
-                try {
-                    object = updateFieldsFromRequest(request,object);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
+                Object object = GsonUtils.gson().fromJson(request.body(), className);
                 DatabaseStore.getDS().save(object);
                 return "ok";
             }

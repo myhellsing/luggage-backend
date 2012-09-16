@@ -21,7 +21,4 @@ public class Tag extends BaseClass{
         this.name = name;
     }
 
-    public String toString(){
-        return "{\"id\":"+id+",\"name\":"+name+"}";
-    }
 }

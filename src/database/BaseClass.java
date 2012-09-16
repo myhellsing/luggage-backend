@@ -1,6 +1,7 @@
 package database;
 
 import com.google.code.morphia.annotations.Id;
+import common.GsonUtils;
 import org.bson.types.ObjectId;
 
 /**
@@ -11,14 +12,20 @@ import org.bson.types.ObjectId;
  * To change this template use File | Settings | File Templates.
  */
 public class BaseClass {
-    @Id
-    ObjectId id; // генерируется автоматически, если не задан вручную
 
-    public ObjectId getId() {
+    @Id
+    public String id = ObjectId.get().toString();
+
+    public String getId() {
         return id;
     }
 
-    public void setId(ObjectId id) {
+    public void setId(String id) {
         this.id = id;
     }
+
+    public String toString(){
+        return GsonUtils.gson().toJson(this).toString();
+    }
+
 }

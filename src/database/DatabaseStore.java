@@ -38,7 +38,7 @@ public class DatabaseStore {
         return m;
     }
 
-    private static Morphia getMorphia(){
+    public static Morphia getMorphia(){
         if (morphia==null){
                 morphia = new Morphia();
                 morphia.map(User.class);

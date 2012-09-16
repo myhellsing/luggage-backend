@@ -23,7 +23,4 @@ public class User extends BaseClass{
         this.login = login;
     }
 
-    public String toString(){
-        return "{\"id\":"+id+",\"login\":"+login+"}";
-    }
 }

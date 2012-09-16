@@ -45,7 +45,7 @@ public class UserTest extends BaseTest{
         User user = addNewUser();
         try {
             TestUtils.UrlResponse response = testUtil.doMethod("GET", "/user", null);
-            Assert.assertEquals("["+user.toString()+"]",response.body);
+            Assert.assertEquals("["+ user.toString()+"]",response.body);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -56,7 +56,7 @@ public class UserTest extends BaseTest{
 
     @Test
     public void testAddUser() throws Exception{
-            TestUtils.UrlResponse response = testUtil.doMethod("POST", "/user?login=catty",null);
+            TestUtils.UrlResponse response = testUtil.doMethod("POST", "/user","{login=\"catty\"}");
             Assert.assertEquals("ok",response.body);
             List<User> users = ds.find(User.class).asList();
             Assert.assertEquals(1,users.size());
@@ -68,7 +68,7 @@ public class UserTest extends BaseTest{
     @Test
     public void testUpdateUser() throws Exception {
         User user = addNewUser();
-        TestUtils.UrlResponse response = testUtil.doMethod("PUT", "/user?login=cat2&id="+user.getId(), null);
+        TestUtils.UrlResponse response = testUtil.doMethod("PUT", "/user", "{login=\"cat2\",id=\""+user.getId()+"\"}");
         List<User> users = ds.find(User.class).asList();
         Assert.assertEquals("ok",response.body);
         Assert.assertEquals(1,users.size());

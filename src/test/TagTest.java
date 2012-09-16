@@ -50,7 +50,7 @@ public class TagTest extends BaseTest{
 
     @Test
     public void testAddTag() throws Exception{
-            TestUtils.UrlResponse response = testUtil.doMethod("POST", "/tag?name=catty",null);
+            TestUtils.UrlResponse response = testUtil.doMethod("POST", "/tag","{name=\"catty\"}");
             Assert.assertEquals("ok",response.body);
             List<Tag> tags = ds.find(Tag.class).asList();
             Assert.assertEquals(1,tags.size());
@@ -62,7 +62,7 @@ public class TagTest extends BaseTest{
     @Test
     public void testUpdateUser() throws Exception {
         Tag tag = addNewTag();
-        TestUtils.UrlResponse response = testUtil.doMethod("PUT", "/tag?name=cat2&id="+tag.getId(), null);
+        TestUtils.UrlResponse response = testUtil.doMethod("PUT", "/tag", "{name=\"cat2\",id=\""+tag.getId()+"\"}");
         List<Tag> tags = ds.find(Tag.class).asList();
         Assert.assertEquals("ok",response.body);
         Assert.assertEquals(1,tags.size());

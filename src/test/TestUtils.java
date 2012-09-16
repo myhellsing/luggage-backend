@@ -1,11 +1,11 @@
 package test;
 
+import spark.utils.IOUtils;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-
-import spark.utils.IOUtils;
 
 public class TestUtils {
 
@@ -21,7 +21,7 @@ public class TestUtils {
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod(requestMethod);
 
-        if (requestMethod.equals("POST") && body != null) {
+        if ( (requestMethod.equals("POST") ||requestMethod.equals("PUT") ) && body != null) {
             connection.setDoOutput(true);
             connection.getOutputStream().write(body.getBytes());
         }
