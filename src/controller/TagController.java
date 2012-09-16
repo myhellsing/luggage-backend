@@ -17,9 +17,11 @@ public class TagController extends BaseController {
         className =Tag.class;
     }
 
-    public static void route(){
+    public void route(){
 
-       BaseController.route();
+       super.route();
+
+
 
  /*       post(new Route("/user") {
             @Override

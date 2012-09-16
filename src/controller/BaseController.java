@@ -17,10 +17,10 @@ import static spark.Spark.*;
  */
 abstract public class BaseController {
 
-    protected static String baseRoute = "/default";
-    protected static Class className = null;
+    protected  String baseRoute = "/default";
+    protected  Class className = null;
 
-    protected static Object updateFieldsFromRequest(Request request, Object object) throws IllegalAccessException {
+    protected  Object updateFieldsFromRequest(Request request, Object object) throws IllegalAccessException {
         for (Field field:className.getDeclaredFields() ){
             if (request.queryParams(field.getName()) != null){
                 field.setAccessible(true);
@@ -30,7 +30,15 @@ abstract public class BaseController {
         return object;
     }
 
-    public static void route(){
+    public  void route(){
+
+        get(new Route(baseRoute+"/checkController"){
+            @Override
+            public Object handle(Request request, Response response) {
+                return baseRoute;
+            }
+        });
+
 
         get(new Route(baseRoute) {
             @Override
@@ -66,7 +74,7 @@ abstract public class BaseController {
             public Object handle(Request request, Response response) {
                 try {
                     Object object = className.newInstance();
-                    object = BaseController.updateFieldsFromRequest(request,object);
+                    object = updateFieldsFromRequest(request,object);
                     DatabaseStore.getDS().save(object);
                     return "ok";
                 } catch (InstantiationException e) {
@@ -87,7 +95,7 @@ abstract public class BaseController {
                 }
                 Object object =DatabaseStore.getDS().get(className,new ObjectId(request.queryParams("id")));
                 try {
-                    object = BaseController.updateFieldsFromRequest(request,object);
+                    object = updateFieldsFromRequest(request,object);
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
